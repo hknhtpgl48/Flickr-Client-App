@@ -8,11 +8,16 @@
 import UIKit
 
 class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpdating {
-
+    
+    private var response: PhotosResponse? {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchController()
-//        fetchRecentPhotos()
+        fetchRecentPhotos()
     }
     
     private func setupSearchController() {
@@ -24,7 +29,7 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     }
     
     private func fetchRecentPhotos() {
-        guard let url = URL(string: "https://www.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=f493bbe505207d549167a181cb293721&format=json&nojsoncallback=1&extras=description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o") else { return }
+        guard let url = URL(string: "https://www.flickr.com/services/rest/?method=flickr.photos.getRecent&api_key=\(Config.flickrKey)&format=json&nojsoncallback=1&extras=description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims,views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o") else { return }
         let request = URLRequest(url: url)
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
@@ -32,8 +37,23 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
                 return
             }
             
-            if let data = data, let json = try? JSONSerialization.jsonObject(with: data) as? [String : Any] {
-                print(json)
+            if let data = data, let response = try? JSONDecoder().decode(PhotosResponse.self, from: data) {
+                self.response = response
+            }
+        }.resume()
+    }
+    
+    private func searchPhotos(with text: String) {
+        guard let url = URL(string: "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Config.flickrKey)&text=honda&format=json&nojsoncallback=1&extras=description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims, views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o") else { return }
+        let request = URLRequest(url: url)
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                debugPrint(error)
+                return
+            }
+            
+            if let data = data, let response = try? JSONDecoder().decode(PhotosResponse.self, from: data) {
+                self.response = response
             }
         }.resume()
     }
@@ -75,7 +95,7 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else { return }
         if text.count > 2 {
-            print(text)
+            searchPhotos(with: text)
         }
     }
 }

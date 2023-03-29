@@ -21,6 +21,7 @@ Temporary Items
 .apdisk
 ## User settings
 xcuserdata/
+Flickr Client App/Supporting Files/Config.swift
 ## Obj-C/Swift specific
 *.hmap
 ## App packaging

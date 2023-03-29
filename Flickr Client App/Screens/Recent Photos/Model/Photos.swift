@@ -6,3 +6,10 @@
 //
 
 import Foundation
+struct Photos: Codable {
+    //Servisten gelenler optional olmalı
+    let page: Int?
+    let pages: Int?
+    let perpage: Int?
+    let photo: [Photo]?
+}
