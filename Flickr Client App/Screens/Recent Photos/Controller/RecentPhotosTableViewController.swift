@@ -11,7 +11,9 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     
     private var response: PhotosResponse? {
         didSet {
-            tableView.reloadData()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
     override func viewDidLoad() {
@@ -37,8 +39,16 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
                 return
             }
             
-            if let data = data, let response = try? JSONDecoder().decode(PhotosResponse.self, from: data) {
-                self.response = response
+//            if let data = data, let response = try? JSONDecoder().decode(PhotosResponse.self, from: data) {
+//                self.response = response
+//            }
+            if let data = data {
+                do {
+                    let recentResponse = try JSONDecoder().decode(PhotosResponse.self, from: data)
+                    self.response = recentResponse
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
         }.resume()
     }
@@ -57,6 +67,23 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
             }
         }.resume()
     }
+    
+    private func fetchImage(with url: String?, competion: @escaping (Data) -> Void) {
+        if let urlString = url, let url = URL(string: urlString) {
+            let request = URLRequest(url: url)
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    debugPrint(error)
+                    return
+                }
+                if let data = data {
+                    DispatchQueue.main.async {
+                        competion(data)
+                    }
+                }
+            }.resume()
+        }
+    }
 
     //MARK: - UITableViewDataSource & UITableViewDelegate
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -64,15 +91,34 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return response?.photos?.photo?.count ?? .zero
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let photo = response?.photos?.photo?[indexPath.row]
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "favoriteCell", for: indexPath) as! PhotoTableViewCell //reusableIdentifierı tanımladığımız cell'in tipine cast
         cell.ownerImageView.backgroundColor = .darkGray
-        cell.ownerNameLabel.text = "Owner Name"
+        cell.ownerNameLabel.text = photo?.ownername
+        //getting ownerImage
+        if let iconServer = photo?.iconserver,
+           let iconFarm = photo?.iconfarm,
+           let nsId = photo?.owner,
+           NSString(string: iconServer).intValue > 0 {
+            fetchImage(with: "http://farm\(iconFarm).staticflickr.com/\(iconServer)/buddyicons/\(nsId).jpg") { data in
+                cell.ownerImageView.image = UIImage(data: data)
+            }
+        } else {
+            fetchImage(with: "https://www.flickr.com/images/buddyicon.gif") { data in
+                cell.ownerImageView.image = UIImage(data: data)
+            }
+        }
+        //getting image
+        fetchImage(with: photo?.urlN) { data in
+           cell.photoImageView.image = UIImage(data: data)
+        }
         cell.photoImageView.backgroundColor = .gray
-        cell.titleLabel.text = "Title"
+        cell.titleLabel.text = photo?.title
         return cell
     }
     
@@ -86,7 +132,7 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
-        if let viewController = segue.destination as? PhotoDetailViewController {
+        if segue.destination is PhotoDetailViewController {
             //TODO: seçilen fotoyu detay ekranına gönder
         }
     }
