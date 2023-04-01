@@ -56,7 +56,7 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     }
     
     private func searchPhotos(with text: String) {
-        guard let url = URL(string: "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Config.flickrKey)&text=honda&format=json&nojsoncallback=1&extras=description,license,date_upload,date_taken,owner_name,icon_server,original_format,last_update,geo,tags,machine_tags,o_dims, views,media,path_alias,url_sq,url_t,url_s,url_q,url_m,url_n,url_z,url_c,url_l,url_o") else { return }
+        guard let url = URL(string: "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Config.flickrKey)&text=\(text)&extras=description%2Clicense%2Cdate_upload%2Cdate_taken%2Cowner_name%2Cicon_server%2Coriginal_format%2Clast_update%2Cgeo%2Ctags%2Cmachine_tags%2Co_dims%2C+views%2Cmedia%2Cpath_alias%2Curl_sq%2Curl_t%2Curl_s%2Curl_q%2Curl_m%2Curl_n%2Curl_z%2Curl_c%2Curl_l%2Curl_o&format=json&nojsoncallback=1") else { return }
         let request = URLRequest(url: url)
         URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
