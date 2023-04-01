@@ -20,7 +20,6 @@ struct Photo: Codable {
     let iconfarm: Int?
     let views, tags, machineTags, originalsecret: String?
     let originalformat: String?
-//    let latitude, longitude, accuracy, context: Int?
     let media, mediaStatus: String?
     let urlSq: String?
     let heightSq, widthSq: Int?
@@ -43,7 +42,7 @@ struct Photo: Codable {
     let urlO: String?
     let heightO, widthO: Int?
     let pathalias: String?
-
+    
     enum CodingKeys: String, CodingKey {
         case id, owner, secret, server, farm, title, ispublic, isfriend, isfamily, license, description, dateupload, lastupdate, datetaken, datetakengranularity, datetakenunknown, ownername, iconserver, iconfarm, views, tags
         case machineTags = "machine_tags"
@@ -84,10 +83,21 @@ struct Photo: Codable {
     }
 }
 
+extension Photo {
+    var buddyIconUrl: String? {
+        if let iconServer = iconserver,
+           let iconFarm = iconfarm,
+           let nsId = owner,
+           NSString(string: iconServer).intValue > 0 {
+            return "http://farm\(iconFarm).staticflickr.com/\(iconServer)/buddyicons/\(nsId).jpg"
+        } else { return "https://www.flickr.com/images/buddyicon.gif" }
+    }
+}
+
 // MARK: - Description
 struct Description: Codable {
     let content: String?
-
+    
     enum CodingKeys: String, CodingKey {
         case content = "_content"
     }

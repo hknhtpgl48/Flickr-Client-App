@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		FF553E7629D36DF700110D3D /* PhotosResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF553E7529D36DF700110D3D /* PhotosResponse.swift */; };
+		FF6A828B29D81E1F003207B3 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF6A828A29D81E1F003207B3 /* NetworkManager.swift */; };
 		FF9D313C29D2CF0F00836967 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9D313B29D2CF0F00836967 /* AppDelegate.swift */; };
 		FF9D313E29D2CF0F00836967 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9D313D29D2CF0F00836967 /* SceneDelegate.swift */; };
 		FF9D314029D2CF0F00836967 /* RecentPhotosTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF9D313F29D2CF0F00836967 /* RecentPhotosTableViewController.swift */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		FF553E7529D36DF700110D3D /* PhotosResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotosResponse.swift; sourceTree = "<group>"; };
+		FF6A828A29D81E1F003207B3 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FF9D313829D2CF0F00836967 /* Flickr Client App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Flickr Client App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF9D313B29D2CF0F00836967 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FF9D313D29D2CF0F00836967 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,6 +63,31 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		FF6A828729D81DED003207B3 /* Delegates */ = {
+			isa = PBXGroup;
+			children = (
+				FF9D313B29D2CF0F00836967 /* AppDelegate.swift */,
+				FF9D313D29D2CF0F00836967 /* SceneDelegate.swift */,
+			);
+			path = Delegates;
+			sourceTree = "<group>";
+		};
+		FF6A828829D81DFA003207B3 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				FF6A828929D81E00003207B3 /* Networking */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		FF6A828929D81E00003207B3 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				FF6A828A29D81E1F003207B3 /* NetworkManager.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
 		FF9D312F29D2CF0F00836967 = {
 			isa = PBXGroup;
 			children = (
@@ -90,8 +117,8 @@
 		FF9D314F29D2CF9B00836967 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				FF9D313B29D2CF0F00836967 /* AppDelegate.swift */,
-				FF9D313D29D2CF0F00836967 /* SceneDelegate.swift */,
+				FF6A828829D81DFA003207B3 /* Core */,
+				FF6A828729D81DED003207B3 /* Delegates */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -242,6 +269,7 @@
 			files = (
 				FFB97BAD29D4436E00603295 /* Photo.swift in Sources */,
 				FFD45EC229D2E4A40095E5F6 /* PhotoTableViewCell.swift in Sources */,
+				FF6A828B29D81E1F003207B3 /* NetworkManager.swift in Sources */,
 				FFD8C97F29D44C3300AE7E1D /* Config.swift in Sources */,
 				FF9D314029D2CF0F00836967 /* RecentPhotosTableViewController.swift in Sources */,
 				FF9D313C29D2CF0F00836967 /* AppDelegate.swift in Sources */,

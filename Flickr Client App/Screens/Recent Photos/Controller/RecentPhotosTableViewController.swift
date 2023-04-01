@@ -16,6 +16,8 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
             }
         }
     }
+    private var selectedPhoto: Photo?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchController()
@@ -67,23 +69,6 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
             }
         }.resume()
     }
-    
-    private func fetchImage(with url: String?, competion: @escaping (Data) -> Void) {
-        if let urlString = url, let url = URL(string: urlString) {
-            let request = URLRequest(url: url)
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    debugPrint(error)
-                    return
-                }
-                if let data = data {
-                    DispatchQueue.main.async {
-                        competion(data)
-                    }
-                }
-            }.resume()
-        }
-    }
 
     //MARK: - UITableViewDataSource & UITableViewDelegate
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -101,20 +86,11 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
         cell.ownerImageView.backgroundColor = .darkGray
         cell.ownerNameLabel.text = photo?.ownername
         //getting ownerImage
-        if let iconServer = photo?.iconserver,
-           let iconFarm = photo?.iconfarm,
-           let nsId = photo?.owner,
-           NSString(string: iconServer).intValue > 0 {
-            fetchImage(with: "http://farm\(iconFarm).staticflickr.com/\(iconServer)/buddyicons/\(nsId).jpg") { data in
-                cell.ownerImageView.image = UIImage(data: data)
-            }
-        } else {
-            fetchImage(with: "https://www.flickr.com/images/buddyicon.gif") { data in
-                cell.ownerImageView.image = UIImage(data: data)
-            }
+        NetworkManager.shared.fetchImage(with: photo?.buddyIconUrl) { data in
+            cell.ownerImageView.image = UIImage(data: data)
         }
         //getting image
-        fetchImage(with: photo?.urlN) { data in
+        NetworkManager.shared.fetchImage(with: photo?.urlN) { data in
            cell.photoImageView.image = UIImage(data: data)
         }
         cell.photoImageView.backgroundColor = .gray
@@ -125,6 +101,7 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //Aşağıdaki gibi gidersek siyah bir ekran gelir ve navigationController özellikleri olmaz
         //navigationController?.pushViewController(PhotoDetailViewController(), animated: true)
+        selectedPhoto = response?.photos?.photo?[indexPath.row]
         performSegue(withIdentifier: "detailSegue", sender: nil)
     }
     
@@ -132,8 +109,8 @@ class RecentPhotosTableViewController: UITableViewController, UISearchResultsUpd
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
-        if segue.destination is PhotoDetailViewController {
-            //TODO: seçilen fotoyu detay ekranına gönder
+        if let viewController = segue.destination as? PhotoDetailViewController {
+            viewController.photo = selectedPhoto
         }
     }
     
